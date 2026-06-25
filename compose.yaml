@@ -1,0 +1,62 @@
+x-consumer-base: &consumer-base
+    build:
+        context: .
+        dockerfile: docker/php-consumer/Dockerfile
+    working_dir: /app
+    environment:
+        APP_ENV: dev
+        COMPOSER_ALLOW_SUPERUSER: 1
+        DATABASE_URL: postgresql://app:root@database:5432/app?serverVersion=16&charset=utf8
+        DATABASE_TEST_URL: postgresql://app:root@database:5432/app_test?serverVersion=16&charset=utf8
+        MAILER_DSN: smtp://mailer:1025
+    volumes:
+        - ./:/app
+    depends_on:
+        database:
+            condition: service_healthy
+    restart: unless-stopped
+
+services:
+    ###> doctrine/doctrine-bundle ###
+    database:
+        image: postgres:${POSTGRES_VERSION:-16}-alpine
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB:-app}
+            # You should definitely change the password in production
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+            POSTGRES_USER: ${POSTGRES_USER:-app}
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "pg_isready",
+                    "-d",
+                    "${POSTGRES_DB:-app}",
+                    "-U",
+                    "${POSTGRES_USER:-app}",
+                ]
+            timeout: 5s
+            retries: 5
+            start_period: 60s
+        volumes:
+            - database_data:/var/lib/postgresql/data:rw
+            # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+            # - ./docker/db/data:/var/lib/postgresql/data:rw
+    ###< doctrine/doctrine-bundle ###
+
+    messenger_email_notifications_consumer:
+        <<: *consumer-base
+        command: >-
+            sh -lc "if [ ! -f vendor/autoload.php ]; then composer install --no-interaction --prefer-dist; fi &&
+            php bin/console messenger:consume email_notifications --time-limit=3600 --memory-limit=256M -vv"
+
+    messenger_scheduler_statistics_digest_consumer:
+        <<: *consumer-base
+        command: >-
+            sh -lc "if [ ! -f vendor/autoload.php ]; then composer install --no-interaction --prefer-dist; fi &&
+            php bin/console messenger:consume scheduler_statistics_digest --time-limit=3600 --memory-limit=256M -vv"
+
+volumes:
+    ###> doctrine/doctrine-bundle ###
+    database_data:
+###< doctrine/doctrine-bundle ###

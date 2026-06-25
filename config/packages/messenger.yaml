@@ -1,0 +1,14 @@
+framework:
+    messenger:
+        transports:
+            email_notifications: "doctrine://default?queue_name=email_notifications"
+            sync: "sync://"
+
+        routing:
+            App\Message\AuthorNotificationMessage: email_notifications
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                email_notifications: "in-memory://"

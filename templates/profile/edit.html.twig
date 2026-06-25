@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block body %}
+    <div class="container auth-page">
+        <div class="auth-card">
+            <h1 class="auth-card__title">Редактирование профиля</h1>
+            <p class="auth-card__lead">Обновите текст в поле ниже и сохраните изменения.</p>
+            {{ include('profile/_form.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактирование поста{% endblock %}
+
+{% block body %}
+    <div id="content">
+        {{ form_start(form) }}
+        <div style="margin: 5px;">
+            {{ form_row(form.title) }}
+            {{ form_row(form.description) }}
+        </div>
+        <div style="margin: 5px;">
+            <button>Сохранить изменения</button>
+        </div>
+        {{ form_end(form) }}
+
+        <a href="{{ path('app_post_my') }}">Назад к моим постам</a>
+    </div>
+{% endblock %}

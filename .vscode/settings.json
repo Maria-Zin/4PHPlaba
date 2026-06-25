@@ -1,0 +1,13 @@
+{
+    "php.suggest.basic": false,
+    "php.validate.executablePath": "",
+    "php.validate.enable": false,
+    "intelephense.diagnostics.undefinedMethods": false,
+    "intelephense.diagnostics.undefinedFunctions": false,
+    "intelephense.diagnostics.undefinedConstants": false,
+    "intelephense.diagnostics.undefinedClassConstants": false,
+    "intelephense.diagnostics.undefinedTypes": false,
+    "intelephense.diagnostics.undefinedProperties": false,
+    "intelephense.diagnostics.unusedUse": false,
+    "intelephense.files.maxSize": 5000000
+}

@@ -1,0 +1,57 @@
+<div>
+    Всего комментариев: {{ commentsCount }} <br>
+    Пост с максимальным числом комментариев: {{ maxCommentsPost ? maxCommentsPost.title : '—' }} <br>
+    Пост с минимальным (но не нулевым) числом комментариев: {{ minCommentsPost ? minCommentsPost.title : '—' }} <br>
+
+    Посты с комментариями больше среднего:
+    {% if postsGreaterThanAvg is not empty %}
+        <ul>
+            {% for post in postsGreaterThanAvg %}
+                <li>{{ post.title }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        — <br>
+    {% endif %}
+
+    Комментарий с самым длинным content:
+    {% if commentWithMaxContent %}
+        #{{ commentWithMaxContent.id }} (пост: {{ commentWithMaxContent.post.title }})<br>
+        {{ commentWithMaxContent.content }}<br>
+    {% else %}
+        — <br>
+    {% endif %}
+
+    Топ комментариев по (лайк+дизлайк):
+    {% if topReactedComments is not empty %}
+        <ul>
+            {% for item in topReactedComments %}
+                <li>#{{ item.comment.id }} — {{ item.comment.content }} (👍 {{ item.likes }}, 👎 {{ item.dislikes }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        — <br>
+    {% endif %}
+
+    Топ профилей по суммарным комментариям к их постам:
+    {% if topProfiles is not empty %}
+        <ul>
+            {% for profile in topProfiles %}
+                <li>{{ profile.user.email }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        — <br>
+    {% endif %}
+
+    Профили: есть посты, но не оставили ни одного комментария:
+    {% if profilesWithPostsNoComments is not empty %}
+        <ul>
+            {% for profile in profilesWithPostsNoComments %}
+                <li>{{ profile.user.email }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        — <br>
+    {% endif %}
+</div>

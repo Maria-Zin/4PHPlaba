@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+# See also https://symfony.com/doc/current/service_container/import.html
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    app.mailer_from: "no-reply@example.com"
+    app.health_check.mail_to: "health-check@example.com"
+    app.health_check.weather_url: "https://api.open-meteo.com/v1/forecast?latitude=55.7558&longitude=37.6173&daily=temperature_2m_max&forecast_days=1"
+    app.health_check.universities_url: "http://universities.hipolabs.com/search?country=Russian%20Federation&name=Moscow"
+    app.health_check.server_url: "http://127.0.0.1:8000/health"
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: "../src/"
+
+    App\Service\HealthCheckService:
+        arguments:
+            $appCache: "@cache.app"
+            $databaseUrl: "%env(resolve:DATABASE_URL)%"
+            $weatherApiUrl: "%app.health_check.weather_url%"
+            $universitiesApiUrl: "%app.health_check.universities_url%"
+            $healthCheckServerUrl: "%app.health_check.server_url%"
+            $healthCheckMailTo: "%app.health_check.mail_to%"
+            $mailerFrom: "%app.mailer_from%"
+
+    App\MessageHandler\AuthorNotificationMessageHandler:
+        arguments:
+            $mailerFrom: "%app.mailer_from%"
+
+    App\MessageHandler\StatisticsDigestMessageHandler:
+        arguments:
+            $mailerFrom: "%app.mailer_from%"
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones

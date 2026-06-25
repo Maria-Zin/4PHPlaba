@@ -1,0 +1,33 @@
+﻿{% extends 'base.html.twig' %}
+
+{% block title %}{{ pageTitle|default('Лента постов') }}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>{{ pageTitle|default('Лента постов') }}</h1>
+
+    <div style="margin-bottom: 16px;">
+        <a href="{{ path('app_post') }}">Лента</a>
+        <a href="{{ path('app_post_my') }}">Мои посты</a>
+        <a href="{{ path('app_post_new') }}">Создать новый пост</a>
+    </div>
+
+    {% for post in posts %}
+        <div style="margin-bottom: 16px; padding: 12px; border: 1px solid #ddd;">
+            <h3>{{ post.title }}</h3>
+            <div style="margin-bottom: 8px;">
+                Автор: <strong>{{ post.profile and post.profile.user ? post.profile.user.email : 'Неизвестный автор' }}</strong>
+            </div>
+            <div style="margin-bottom: 8px;">
+                {{ post.description|slice(0, 200) }}{% if post.description|length > 200 %}...{% endif %}
+            </div>
+            <a href="{{ path('app_post_show', {'id': post.id}) }}">Смотреть подробности</a>
+            {% if app.user and app.user.profile and post.profile and post.profile.id == app.user.profile.id %}
+                <a href="{{ path('app_post_edit', {'id': post.id}) }}">Редактировать</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>{% if isMyPosts|default(false) %}У вас пока нет постов{% else %}В ленте пока нет постов{% endif %}</p>
+    {% endfor %}
+</div>
+{% endblock %}

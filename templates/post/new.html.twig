@@ -1,0 +1,17 @@
+﻿{% extends 'base.html.twig' %}
+
+{% block title %}Создание поста{% endblock %}
+
+{% block body %}
+    <div id="content">
+        {{ form_start(form) }}
+        <div style="margin: 5px;">
+            {{ form_row(form.title) }}
+            {{ form_row(form.description) }}
+        </div>
+        <div style="margin: 5px;">
+            <button>Сохранить</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

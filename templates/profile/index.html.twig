@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProfileController!{% endblock %}
+
+{% block body %}
+
+    <div>
+        {% if user.profile is not empty %}
+            <p class="container">
+                {{ user.profile.bio}}
+                <br>
+                <a href="{{ path('app_profile_edit') }}">Редактирование профиля</a>
+                <form method="post" action="{{path('app_profile_delete') }}">
+                    <button type="submit" onclick="return confirm('Удалить профиль?')">Удалить профиль</button>
+                </form>
+                <a href="{{ path('app_post') }}">Лента постов</a><br>
+                <a href="{{ path('app_post_my') }}">Мои посты</a><br>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_statistics') }}">Статистика администратора</a>
+                {% endif %}
+            </p>
+        {% else %}
+            У вас нет профиля. Нажмите <a href="{{ path('app_profile_new')}}">сюда</a> для его создания.
+        {% endif %}
+    </div>
+{% endblock %}

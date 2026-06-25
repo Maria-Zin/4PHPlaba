@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block body %}
+<div class="container auth-page">
+    <div class="auth-card">
+        <h1 class="auth-card__title">Вход</h1>
+        <p class="auth-card__lead">Войдите по email и паролю.</p>
+
+        {% if error %}
+            <div class="errors" role="alert">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('app_login') }}" class="auth-form">
+            <div class="auth-field">
+                <label for="_username">Email</label>
+                <input id="_username" name="_username" type="email" value="{{ last_username }}" required autocomplete="username" />
+            </div>
+            <div class="auth-field">
+                <label for="_password">Пароль</label>
+                <input id="_password" name="_password" type="password" required autocomplete="current-password" />
+            </div>
+            <div class="auth-actions">
+                <input type="submit" value="Войти" />
+            </div>
+        </form>
+
+        <div class="auth-links">
+            <a href="{{ path('app_registration') }}">Нет аккаунта? Регистрация</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

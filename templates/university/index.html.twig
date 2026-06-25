@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}University List{% endblock %}
+
+{% block body %}
+    <div>
+        {% for university in universities %}
+            <div>
+                Университет: {{ university.name }} <br>
+                Страна: {{ university.country }}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

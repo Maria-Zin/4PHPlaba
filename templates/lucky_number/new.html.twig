@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New LuckyNumber{% endblock %}
+
+{% block body %}
+    <h1>Create new LuckyNumber</h1>
+
+    {{ include('lucky_number/_form.html.twig') }}
+
+    <a href="{{ path('app_lucky_number_index') }}">back to list</a>
+{% endblock %}

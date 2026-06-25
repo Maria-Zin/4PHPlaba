@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Просмотр поста{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ post.title }}</h1>
+        <div class="comment-card__meta" style="margin-bottom: 10px;">
+            Автор поста: <strong>{{ post.profile.user.email }}</strong>
+        </div>
+        <p>{{ post.description }}</p>
+
+        {% if app.user and app.user.profile and post.profile and post.profile.id == app.user.profile.id %}
+            <a href="{{ path('app_post_edit', {'id': post.id}) }}">Редактировать</a>
+            <a href="{{ path('app_post') }}">Назад к ленте</a>
+
+            <form method="post" action="{{ path('app_post_delete', {'id': post.id}) }}" style="display:inline-block;" onsubmit="return confirm('Удалить пост?');">
+                <button type="submit">Удалить</button>
+            </form>
+        {% else %}
+            <a href="{{ path('app_post') }}">Назад к ленте</a>
+        {% endif %}
+
+        <section class="post-comments">
+            <h2 class="post-comments__title">Комментарии</h2>
+            <div class="post-comments__form-wrap">
+                <span class="post-comments__form-label">Добавить комментарий</span>
+                {% include 'comment/_form.html.twig' %}
+            </div>
+            {% if post.comments|length > 0 %}
+                <ul class="comment-list">
+                    {% for comment in post.comments %}
+                        <li class="comment-card">
+                            <div class="comment-card__meta">
+                                <strong>{{ comment.author.user.email }}</strong>
+                                · {{ comment.createdAt|date('d.m.Y, H:i') }}
+                            </div>
+                            <p class="comment-card__body">{{ comment.content }}</p>
+                            {% set reaction = reactionsByCommentId[comment.id]|default({'likes': 0, 'dislikes': 0, 'my': 0}) %}
+
+                            <div class="comment-reactions">
+                                <form method="post" action="{{ path('app_comment_reaction', {'id': comment.id, 'value': 1}) }}" style="display:inline-block;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('comment_reaction' ~ comment.id) }}">
+                                    <button type="submit" class="comment-reaction-btn{% if reaction.my == 1 %} comment-reaction-btn--active{% endif %}">
+                                        👍 {{ reaction.likes }}
+                                    </button>
+                                </form>
+
+                                <form method="post" action="{{ path('app_comment_reaction', {'id': comment.id, 'value': -1}) }}" style="display:inline-block;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('comment_reaction' ~ comment.id) }}">
+                                    <button type="submit" class="comment-reaction-btn{% if reaction.my == -1 %} comment-reaction-btn--active{% endif %}">
+                                        👎 {{ reaction.dislikes }}
+                                    </button>
+                                </form>
+                            </div>
+                            {% if app.user and app.user.profile and comment.author and comment.author.id == app.user.profile.id %}
+                                <div class="comment-actions" style="margin-top: 10px;">
+                                    <a href="{{ path('app_comment_edit', {'post_id': post.id, 'id': comment.id}) }}">Редактировать</a>
+
+                                    <form method="post"
+                                        action="{{ path('app_comment_delete', {'post_id': post.id, 'id': comment.id}) }}"
+                                        style="display:inline-block;"
+                                        onsubmit="return confirm('Удалить комментарий?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                        <button type="submit">Удалить</button>
+                                    </form>
+                                </div>
+                        {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="comment-empty">Пока комментариев к этому посту нет.</p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}
